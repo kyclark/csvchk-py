@@ -75,7 +75,11 @@ def main():
 
     args = get_args()
 
-    for fh in args.file:
+    for i, fh in enumerate(args.file):
+        if len(args.file) > 1:
+            print('{}==> {} <=='.format('\n' if i > 0 else '',
+                                        os.path.basename(fh.name)))
+
         sep = guess_sep(args.sep, fh.name)
         csv_args = {'delimiter': sep}
 

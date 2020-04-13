@@ -26,8 +26,8 @@ val : foo
 
 Run with `-h` or `--help` for a full usage:
 
-	usage: csvchk.py [-h] [-s sep] [-f names] [-l nrecs] [-d] [-n] [-N]
-	                 FILE [FILE ...]
+	usage: csvchk [-h] [-s sep] [-f names] [-l nrecs] [-d] [-n] [-N]
+	              FILE [FILE ...]
 
 	Check a delimited text file
 
@@ -62,7 +62,7 @@ id:val
 You could run:
 
 ```
-$ ./csvchk.py -s ':' test/test2.txt
+$ csvchk -s ':' test/test2.txt
 // ****** Record 1 ****** //
 id  : 1
 val : foo
@@ -84,7 +84,7 @@ $ cat test/nohdr.csv
 You can run:
 
 ```
-$ ./csvchk.py -f 'id, value' test/nohdr.csv
+$ csvchk -f 'id, value' test/nohdr.csv
 // ****** Record 1 ****** //
 id    : 1
 value : foo
@@ -96,7 +96,7 @@ By default, the program will use the `-l` or `--limit` value of `1` to show the 
 You can increase this, for example:
 
 ```
-$ ./csvchk.py -l 2 test/test.csv
+$ csvchk -l 2 test/test.csv
 // ****** Record 1 ****** //
 id  : 1
 val : foo
@@ -108,7 +108,7 @@ val : bar
 To see _all_ the records, use a negative value like `-1`:
 
 ```
-$ ./csvchk.py -l -1 test/test.csv
+$ csvchk -l -1 test/test.csv
 // ****** Record 1 ****** //
 id  : 1
 val : foo
@@ -136,7 +136,7 @@ id,val
 This will be shown:
 
 ```
-$ ./csvchk.py test/sparse.csv -l -1
+$ csvchk test/sparse.csv -l -1
 // ****** Record 1 ****** //
 id  : 1
 val : foo
@@ -151,7 +151,7 @@ val : baz
 You can use the `-d` or `--dense` option to omit fields that have no values:
 
 ```
-$ ./csvchk.py test/sparse.csv -l -1 -d
+$ csvchk test/sparse.csv -l -1 -d
 // ****** Record 1 ****** //
 id  : 1
 val : foo
@@ -166,7 +166,7 @@ val : baz
 The `-n` or `--number` option will append the field numbers before the output:
 
 ```
-$ ./csvchk.py -n test/test.tab
+$ csvchk -n test/test.tab
 // ****** Record 1 ****** //
   1 id  : 1
   2 val : foo
@@ -185,10 +185,27 @@ id	val
 If the input file does not have headers (column names) in the first row, you can use the `-N` or `--noheaders` option to have the program create names like "Field1," "Field2," etc.:
 
 ```
-$ ./csvchk.py -N test/nohdr.csv
+$ csvchk -N test/nohdr.csv
 // ****** Record 1 ****** //
 Field1 : 1
 Field2 : foo
+```
+
+## Multiple file inputs
+
+If given multiple files as inputs, the program will insert a header noting the basename of each file:
+
+```
+$ csvchk test/test.csv test/test.tab
+==> test.csv <==
+// ****** Record 1 ****** //
+id  : 1
+val : foo
+
+==> test.tab <==
+// ****** Record 1 ****** //
+id  : 1
+val : foo
 ```
 
 # Author

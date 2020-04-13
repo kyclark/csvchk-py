@@ -58,7 +58,7 @@ def test_bad_sep():
 
 # --------------------------------------------------
 def test_csv():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} {csv1}')
     assert rv == 0
@@ -68,7 +68,7 @@ def test_csv():
 
 # --------------------------------------------------
 def test_tab():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} {tab1}')
     assert rv == 0
@@ -78,7 +78,7 @@ def test_tab():
 
 # --------------------------------------------------
 def test_sep():
-    """test """
+    """test"""
 
     for file, sep in [(txt1, ','), (txt2, ':')]:
         rv, out = getstatusoutput(f'{prg} -s "{sep}" {file}')
@@ -89,7 +89,7 @@ def test_sep():
 
 # --------------------------------------------------
 def test_number():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -n {csv1}')
     assert rv == 0
@@ -99,7 +99,7 @@ def test_number():
 
 # --------------------------------------------------
 def test_no_headers():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -N {nohdr}')
     assert rv == 0
@@ -109,7 +109,7 @@ def test_no_headers():
 
 # --------------------------------------------------
 def test_fieldnames():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -f "f1, f2" {nohdr}')
     assert rv == 0
@@ -119,7 +119,7 @@ def test_fieldnames():
 
 # --------------------------------------------------
 def test_limit():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -l 2 {csv1}')
     assert rv == 0
@@ -131,7 +131,7 @@ def test_limit():
 
 # --------------------------------------------------
 def test_negative_limit():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -l -1 {csv1}')
     assert rv == 0
@@ -144,7 +144,7 @@ def test_negative_limit():
 
 # --------------------------------------------------
 def test_dense():
-    """test """
+    """test"""
 
     rv, out = getstatusoutput(f'{prg} -l 3 -d {sparse}')
     assert rv == 0
@@ -153,6 +153,26 @@ def test_dense():
         '// ****** Record 2 ****** //', 'id : 2',
         '// ****** Record 3 ****** //', 'val : baz'
     ])
+
+
+# --------------------------------------------------
+def test_multiple_files():
+    """test"""
+
+    rv, out = getstatusoutput(f'{prg} {csv1} {tab1}')
+    assert rv == 0
+    expected = '\n'.join([
+        '==> test.csv <==',
+        '// ****** Record 1 ****** //',
+        'id  : 1',
+        'val : foo',
+        '',
+        '==> test.tab <==',
+        '// ****** Record 1 ****** //',
+        'id  : 1',
+        'val : foo',
+    ])
+    assert out.strip() == expected
 
 
 # --------------------------------------------------
