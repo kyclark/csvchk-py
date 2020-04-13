@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='csvchk',
-    version='0.1.1',
+    version='0.1.2',
     author='Ken Youens-Clark',
     author_email='kyclark@gmail.com',
     description='Vertical view of delimited text records',
