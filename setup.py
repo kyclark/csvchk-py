@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='csvchk',
-    version='0.1.0',
+    version='0.1.1',
     author='Ken Youens-Clark',
     author_email='kyclark@gmail.com',
     description='Vertical view of delimited text records',
@@ -13,6 +13,11 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/kyclark/csvchk',
     packages='.',
+    entry_points={
+        'console_scripts': [
+            'csvchk=csvchk:main',
+        ],
+    },
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
