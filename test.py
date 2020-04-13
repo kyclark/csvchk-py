@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""tests for csvchk.py"""
+
+import os
+import random
+import re
+import string
+from subprocess import getstatusoutput
+
+prg = './csvchk.py'
+csv1 = './test/test.csv'
+tab1 = './test/test.tab'
+txt1 = './test/test.txt'
+txt2 = './test/test2.txt'
+nohdr = './test/nohdr.csv'
+sparse = './test/sparse.csv'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
+
+
+# --------------------------------------------------
+def test_usage():
+    """usage"""
+
+    for flag in ['-h', '--help']:
+        rv, out = getstatusoutput(f'{prg} {flag}')
+        assert rv == 0
+        assert out.lower().startswith('usage')
+
+
+# --------------------------------------------------
+def test_bad_file():
+    """test bad file"""
+
+    bad = random_string()
+    rv, out = getstatusoutput(f'{prg} {bad}')
+    assert rv != 0
+    assert out.lower().startswith('usage')
+    assert re.search(f"No such file or directory: '{bad}'", out)
+
+
+# --------------------------------------------------
+def test_bad_sep():
+    """test bad sep"""
+
+    sep = random.choice(',!:@') * random.choice(range(2, 5))
+    print(f">>>> {sep}")
+    rv, out = getstatusoutput(f'{prg} -s "{sep}" {txt1}')
+    assert rv != 0
+    assert out.lower().startswith('usage')
+    assert re.search(f'--sep "{sep}" must be a 1-character string', out)
+
+
+# --------------------------------------------------
+def test_csv():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} {csv1}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', 'id  : 1', 'val : foo'])
+
+
+# --------------------------------------------------
+def test_tab():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} {tab1}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', 'id  : 1', 'val : foo'])
+
+
+# --------------------------------------------------
+def test_sep():
+    """test """
+
+    for file, sep in [(txt1, ','), (txt2, ':')]:
+        rv, out = getstatusoutput(f'{prg} -s "{sep}" {file}')
+        assert rv == 0
+        assert out.strip() == '\n'.join(
+            ['// ****** Record 1 ****** //', 'id  : 1', 'val : foo'])
+
+
+# --------------------------------------------------
+def test_number():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -n {csv1}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', '  1 id  : 1', '  2 val : foo'])
+
+
+# --------------------------------------------------
+def test_no_headers():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -N {nohdr}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', 'Field1 : 1', 'Field2 : foo'])
+
+
+# --------------------------------------------------
+def test_fieldnames():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -f "f1, f2" {nohdr}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', 'f1 : 1', 'f2 : foo'])
+
+
+# --------------------------------------------------
+def test_limit():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -l 2 {csv1}')
+    assert rv == 0
+    assert out.strip() == '\n'.join([
+        '// ****** Record 1 ****** //', 'id  : 1', 'val : foo',
+        '// ****** Record 2 ****** //', 'id  : 2', 'val : bar'
+    ])
+
+
+# --------------------------------------------------
+def test_negative_limit():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -l -1 {csv1}')
+    assert rv == 0
+    assert out.strip() == '\n'.join([
+        '// ****** Record 1 ****** //', 'id  : 1', 'val : foo',
+        '// ****** Record 2 ****** //', 'id  : 2', 'val : bar',
+        '// ****** Record 3 ****** //', 'id  : 3', 'val : baz'
+    ])
+
+
+# --------------------------------------------------
+def test_dense():
+    """test """
+
+    rv, out = getstatusoutput(f'{prg} -l 3 -d {sparse}')
+    assert rv == 0
+    assert out.strip() == '\n'.join([
+        '// ****** Record 1 ****** //', 'id  : 1', 'val : foo',
+        '// ****** Record 2 ****** //', 'id : 2',
+        '// ****** Record 3 ****** //', 'val : baz'
+    ])
+
+
+# --------------------------------------------------
+def random_string():
+    """generate a random string"""
+
+    k = random.randint(5, 10)
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=k))
