@@ -21,7 +21,7 @@ def get_args():
 
     parser.add_argument('file',
                         metavar='FILE',
-                        type=argparse.FileType('rt'),
+                        type=str,
                         nargs='+',
                         help='Input file(s)')
 
@@ -61,7 +61,21 @@ def get_args():
                         help='No headers in first row',
                         action='store_true')
 
+    parser.add_argument('-e',
+                        '--encoding',
+                        help='File encoding',
+                        metavar='encode',
+                        type=str,
+                        choices=['utf-8', 'utf-8-sig', 'ISO-8859-1'],
+                        default='utf-8')
+
     args = parser.parse_args()
+
+    for filename in args.file:
+        if not os.path.isfile(filename):
+            parser.error(f"No such file or directory: '{filename}'")
+
+    args.file = list(map(lambda f: open(f, encoding=args.encoding), args.file))
 
     if len(args.sep) > 1:
         parser.error(f'--sep "{args.sep}" must be a 1-character string')

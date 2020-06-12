@@ -14,6 +14,7 @@ txt1 = './test/test.txt'
 txt2 = './test/test2.txt'
 nohdr = './test/nohdr.csv'
 sparse = './test/sparse.csv'
+iso = './test/test-iso-8859-1.csv'
 
 
 # --------------------------------------------------
@@ -85,6 +86,18 @@ def test_sep():
         assert rv == 0
         assert out.strip() == '\n'.join(
             ['// ****** Record 1 ****** //', 'id  : 1', 'val : foo'])
+
+
+# --------------------------------------------------
+def test_iso():
+    """test iso"""
+
+    rv, out = getstatusoutput(f'{prg} {iso} -e ISO-8859-1')
+    assert rv == 0
+    assert out.strip() == '\n'.join([
+        '// ****** Record 1 ****** //', 'Sample ID : TC10-2L',
+        'Treatment : Tailings + 10 % Compost', 'Be (µg/g) : 0.009078679'
+    ])
 
 
 # --------------------------------------------------
