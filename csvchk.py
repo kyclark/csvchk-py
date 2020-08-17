@@ -75,7 +75,8 @@ def get_args():
         if not os.path.isfile(filename):
             parser.error(f"No such file or directory: '{filename}'")
 
-    args.file = list(map(lambda f: open(f, encoding=args.encoding), args.file))
+    open_args = {'encoding': args.encoding, 'errors': 'ignore'}
+    args.file = list(map(lambda f: open(f, **open_args), args.file))
 
     if len(args.sep) > 1:
         parser.error(f'--sep "{args.sep}" must be a 1-character string')
