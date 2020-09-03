@@ -26,24 +26,30 @@ val : foo
 
 Run with `-h` or `--help` for a full usage:
 
-	usage: csvchk [-h] [-s sep] [-f names] [-l nrecs] [-d] [-n] [-N]
-	              FILE [FILE ...]
 
-	Check a delimited text file
+    usage: csvchk.py [-h] [-s sep] [-f names] [-l nrecs] [-g grep] [-d] [-n] [-N]
+                     [-e encode] [--version]
+                     FILE [FILE ...]
 
-	positional arguments:
-	  FILE                  Input file(s)
+    Check a delimited text file
 
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  -s sep, --sep sep     Field separator (default: )
-	  -f names, --fieldnames names
-	                        Field names (no header) (default: )
-	  -l nrecs, --limit nrecs
-	                        How many records to show (default: 1)
-	  -d, --dense           Not sparse (skip empty fields) (default: False)
-	  -n, --number          Show field number (e.g., for awk) (default: False)
-	  -N, --noheaders       No headers in first row (default: False)
+    positional arguments:
+      FILE                  Input file(s)
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -s sep, --sep sep     Field separator (default: )
+      -f names, --fieldnames names
+                            Field names (no header) (default: )
+      -l nrecs, --limit nrecs
+                            How many records to show (default: 1)
+      -g grep, --grep grep  Only show records with a given value (default: )
+      -d, --dense           Not sparse (skip empty fields) (default: False)
+      -n, --number          Show field number (e.g., for awk) (default: False)
+      -N, --noheaders       No headers in first row (default: False)
+      -e encode, --encoding encode
+                            File encoding (default: utf-8)
+      --version             show program's version number and exit
 
 ## Separator
 
