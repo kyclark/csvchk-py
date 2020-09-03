@@ -3,7 +3,8 @@
 PRG = "csvchk.py"
 
 test:
-	pytest -xv $(PRG) test.py 
+	# pytest -xv $(PRG) test.py 
+	python3 -m pytest -xv $(PRG) tests
 
 dist: clean
 	python3 setup.py sdist bdist_wheel

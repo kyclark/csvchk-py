@@ -191,6 +191,20 @@ Field1 : 1
 Field2 : foo
 ```
 
+## Filter by record contents
+
+You can use the `-g` or `--grep` option to view only records containing a string:
+
+```
+$ csvchk -g ba -l 2 tests/test.csv
+// ****** Record 1 ****** //
+id  : 2
+val : bar
+// ****** Record 2 ****** //
+id  : 3
+val : baz
+```
+
 ## Multiple file inputs
 
 If given multiple files as inputs, the program will insert a header noting the basename of each file:
@@ -208,6 +222,6 @@ id  : 1
 val : foo
 ```
 
-# Author
+## Author
 
 Ken Youens-Clark <kyclark@gmail.com>

@@ -1,11 +1,12 @@
 import setuptools
+import csvchk
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='csvchk',
-    version='0.1.2',
+    version=csvchk.VERSION,
     author='Ken Youens-Clark',
     author_email='kyclark@gmail.com',
     description='Vertical view of delimited text records',

@@ -8,11 +8,24 @@ import argparse
 import csv
 import os
 import re
-import sys
+from typing import List, TextIO, NamedTuple, Any, Dict
+
+VERSION = '0.1.5'
+
+
+class Args(NamedTuple):
+    file: List[TextIO]
+    sep: str
+    fieldnames: str
+    limit: int
+    grep: str
+    dense_view: bool
+    show_field_number: bool
+    no_headers: bool
 
 
 # --------------------------------------------------
-def get_args():
+def get_args() -> Args:
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
@@ -46,6 +59,13 @@ def get_args():
                         type=int,
                         default=1)
 
+    parser.add_argument('-g',
+                        '--grep',
+                        help='Only show records with a given value',
+                        metavar='grep',
+                        type=str,
+                        default='')
+
     parser.add_argument('-d',
                         '--dense',
                         help='Not sparse (skip empty fields)',
@@ -69,6 +89,10 @@ def get_args():
                         choices=['utf-8', 'utf-8-sig', 'ISO-8859-1'],
                         default='utf-8')
 
+    parser.add_argument('--version',
+                        action='version',
+                        version=f'%(prog)s {VERSION}')
+
     args = parser.parse_args()
 
     for filename in args.file:
@@ -81,14 +105,22 @@ def get_args():
     if len(args.sep) > 1:
         parser.error(f'--sep "{args.sep}" must be a 1-character string')
 
-    return args
+    return Args(file=args.file,
+                sep=args.sep,
+                fieldnames=args.fieldnames,
+                limit=args.limit,
+                grep=args.grep,
+                dense_view=args.dense,
+                show_field_number=args.number,
+                no_headers=args.noheaders)
 
 
 # --------------------------------------------------
-def main():
+def main() -> None:
     """ Make a jazz noise here """
 
     args = get_args()
+    grep = args.grep
 
     for i, fh in enumerate(args.file):
         if len(args.file) > 1:
@@ -96,14 +128,14 @@ def main():
                                         os.path.basename(fh.name)))
 
         sep = guess_sep(args.sep, fh.name)
-        csv_args = {'delimiter': sep}
+        csv_args: Dict[str, Any] = {'delimiter': sep}
 
         if args.fieldnames:
             names = re.split(r'\s*,\s*', args.fieldnames)
             if names:
                 csv_args['fieldnames'] = names
 
-        if args.noheaders:
+        if args.no_headers:
             num_flds = len(fh.readline().split(sep))
             csv_args['fieldnames'] = list(
                 map(lambda i: f'Field{i}', range(1, num_flds + 1)))
@@ -111,26 +143,32 @@ def main():
 
         reader = csv.DictReader(fh, **csv_args)
 
-        for rec_num, row in enumerate(reader, start=1):
+        num_shown = 0
+        for row in reader:
             vals = dict([x for x in row.items()
-                         if x[1] != '']) if args.dense else row
+                         if x[1] != '']) if args.dense_view else row
+
+            if grep and not any([grep in x for x in vals.values()]):
+                continue
+
             flds = vals.keys()
             longest = max(map(len, flds))
             fmt = '{:' + str(longest + 1) + '}: {}'
-            print(f'// ****** Record {rec_num} ****** //')
+            num_shown += 1
+            print(f'// ****** Record {num_shown} ****** //')
             for n, (key, val) in enumerate(vals.items(), start=1):
                 show = fmt.format(key, val)
-                if args.number:
+                if args.show_field_number:
                     print('{:3} {}'.format(n, show))
                 else:
                     print(show)
 
-            if rec_num == args.limit:
+            if num_shown == args.limit:
                 break
 
 
 # --------------------------------------------------
-def guess_sep(sep, filename):
+def guess_sep(sep: str, filename: str) -> str:
     """ If no separator, guess from file extension """
 
     if not sep:
@@ -144,7 +182,7 @@ def guess_sep(sep, filename):
 
 
 # --------------------------------------------------
-def test_guess_sep():
+def test_guess_sep() -> None:
     """ Test guess_sep() """
 
     assert guess_sep(',', 'foo.csv') == ','

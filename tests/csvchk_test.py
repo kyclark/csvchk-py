@@ -8,13 +8,13 @@ import string
 from subprocess import getstatusoutput
 
 prg = './csvchk.py'
-csv1 = './test/test.csv'
-tab1 = './test/test.tab'
-txt1 = './test/test.txt'
-txt2 = './test/test2.txt'
-nohdr = './test/nohdr.csv'
-sparse = './test/sparse.csv'
-iso = './test/test-iso-8859-1.csv'
+csv1 = './tests/test.csv'
+tab1 = './tests/test.tab'
+txt1 = './tests/test.txt'
+txt2 = './tests/test2.txt'
+nohdr = './tests/nohdr.csv'
+sparse = './tests/sparse.csv'
+iso = './tests/test-iso-8859-1.csv'
 
 
 # --------------------------------------------------
@@ -152,6 +152,30 @@ def test_negative_limit():
         '// ****** Record 1 ****** //', 'id  : 1', 'val : foo',
         '// ****** Record 2 ****** //', 'id  : 2', 'val : bar',
         '// ****** Record 3 ****** //', 'id  : 3', 'val : baz'
+    ])
+
+
+# --------------------------------------------------
+def test_grep():
+    """test grep"""
+
+    rv1, out1 = getstatusoutput(f'{prg} -g ba {csv1}')
+    assert rv1 == 0
+    assert out1.strip() == '\n'.join([
+        '// ****** Record 1 ****** //',
+        'id  : 2',
+        'val : bar',
+    ])
+
+    rv2, out2 = getstatusoutput(f'{prg} --grep ba --limit 10 {csv1}')
+    assert rv2 == 0
+    assert out2.strip() == '\n'.join([
+        '// ****** Record 1 ****** //',
+        'id  : 2',
+        'val : bar',
+        '// ****** Record 2 ****** //',
+        'id  : 3',
+        'val : baz',
     ])
 
 
