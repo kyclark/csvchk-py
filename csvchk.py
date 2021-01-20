@@ -8,9 +8,10 @@ import argparse
 import csv
 import os
 import re
+import sys
 from typing import List, TextIO, NamedTuple, Any, Dict
 
-VERSION = '0.1.5'
+VERSION = '0.1.6'
 
 
 class Args(NamedTuple):
@@ -96,11 +97,13 @@ def get_args() -> Args:
     args = parser.parse_args()
 
     for filename in args.file:
-        if not os.path.isfile(filename):
+        if filename != '-' and not os.path.isfile(filename):
             parser.error(f"No such file or directory: '{filename}'")
 
     open_args = {'encoding': args.encoding, 'errors': 'ignore'}
-    args.file = list(map(lambda f: open(f, **open_args), args.file))
+    args.file = list(
+        map(lambda f: sys.stdin
+            if f == '-' else open(f, **open_args), args.file))
 
     if len(args.sep) > 1:
         parser.error(f'--sep "{args.sep}" must be a 1-character string')
@@ -139,7 +142,8 @@ def main() -> None:
             num_flds = len(fh.readline().split(sep))
             csv_args['fieldnames'] = list(
                 map(lambda i: f'Field{i}', range(1, num_flds + 1)))
-            fh.seek(0)
+            if fh.name != '<stdin>':
+                fh.seek(0)
 
         reader = csv.DictReader(fh, **csv_args)
 
