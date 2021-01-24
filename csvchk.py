@@ -7,11 +7,12 @@ Author : Ken Youens-Clark <kyclark@gmail.com>
 import argparse
 import csv
 import os
+import pyparsing as pp
 import re
 import sys
 from typing import List, TextIO, NamedTuple, Any, Dict
 
-VERSION = '0.1.6'
+VERSION = '0.1.8'
 
 
 class Args(NamedTuple):
@@ -139,7 +140,8 @@ def main() -> None:
                 csv_args['fieldnames'] = names
 
         if args.no_headers:
-            num_flds = len(fh.readline().split(sep))
+            line = fh.readline()
+            num_flds = len(pp.commaSeparatedList.parseString(line).asList())
             csv_args['fieldnames'] = list(
                 map(lambda i: f'Field{i}', range(1, num_flds + 1)))
             if fh.name != '<stdin>':
