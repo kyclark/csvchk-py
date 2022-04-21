@@ -20,3 +20,6 @@ test_install:
 
 up:
 	twine upload dist/*
+
+prereq:
+	python3 -m pip install -r requirements.txt
