@@ -4,18 +4,22 @@ Purpose: Check the first/few records of a delimited text file
 Author : Ken Youens-Clark <kyclark@gmail.com>
 """
 
+# pylint: disable=use-implicit-booleaness-not-comparison,unspecified-encoding,too-many-locals
+
 import argparse
 import csv
 import os
 import pyparsing as pp
 import re
 import sys
-from typing import List, TextIO, NamedTuple, Any, Dict
+from collections import defaultdict
+from typing import List, TextIO, NamedTuple, Any, Dict, Optional, Sequence
 
-VERSION = '0.1.8'
+VERSION = '0.2.0'
 
 
 class Args(NamedTuple):
+    """ Command-line arguments """
     file: List[TextIO]
     sep: str
     fieldnames: str
@@ -141,23 +145,27 @@ def main() -> None:
 
         if args.no_headers:
             line = fh.readline()
-            num_flds = len(pp.commaSeparatedList.parseString(line).asList())
+            num_flds = len(
+                pp.pyparsing_common.comma_separated_list.parseString(
+                    line).asList())
             csv_args['fieldnames'] = list(
                 map(lambda i: f'Field{i}', range(1, num_flds + 1)))
             if fh.name != '<stdin>':
                 fh.seek(0)
 
         reader = csv.DictReader(fh, **csv_args)
-
+        reader.fieldnames = make_cols_unique(reader.fieldnames)
         num_shown = 0
-        for row in reader:
-            vals = dict([x for x in row.items()
-                         if x[1] != '']) if args.dense_view else row
 
-            if grep and not any([grep in x for x in vals.values()]):
+        for row in reader:
+            vals = {k: v
+                    for k, v in row.items()
+                    if v != ''} if args.dense_view else row
+
+            if grep and not any(grep in x for x in vals.values()):
                 continue
 
-            flds = vals.keys()
+            flds = list(vals.keys())
             longest = max(map(len, flds))
             fmt = '{:' + str(longest + 1) + '}: {}'
             num_shown += 1
@@ -165,7 +173,7 @@ def main() -> None:
             for n, (key, val) in enumerate(vals.items(), start=1):
                 show = fmt.format(key, val)
                 if args.show_field_number:
-                    print('{:3} {}'.format(n, show))
+                    print(f'{n:3} {show}')
                 else:
                     print(show)
 
@@ -196,6 +204,38 @@ def test_guess_sep() -> None:
     assert guess_sep('\t', 'foo.csv') == '\t'
     assert guess_sep('', 'foo.tab') == '\t'
     assert guess_sep('', 'foo.txt') == '\t'
+
+
+# --------------------------------------------------
+def make_cols_unique(names: Optional[Sequence[Any]]) -> List[str]:
+    """ Make all column names unique """
+
+    new_names = []
+
+    if names is not None:
+        seen: Dict[str, int] = defaultdict(int)
+        for name in names:
+            num = seen[name]
+            if num == 0:
+                new_names.append(name)
+            else:
+                new_names.append(f'{name}_{num + 1}')
+
+            seen[name] += 1
+
+    return new_names
+
+
+# --------------------------------------------------
+def test_make_cols_unique() -> None:
+    """ Test make_cols_unique """
+
+    assert make_cols_unique(None) == []
+    assert make_cols_unique([]) == []
+    assert make_cols_unique(['foo', 'bar']) == ['foo', 'bar']
+    assert make_cols_unique(['foo', 'bar', 'foo']) == ['foo', 'bar', 'foo_2']
+    assert make_cols_unique(['foo', 'bar', 'foo', 'bar', 'foo'
+                             ]) == ['foo', 'bar', 'foo_2', 'bar_2', 'foo_3']
 
 
 # --------------------------------------------------

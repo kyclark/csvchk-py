@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""tests for csvchk.py"""
+""" Tests for csvchk.py """
 
 import os
 import random
@@ -15,6 +14,7 @@ txt2 = './tests/test2.txt'
 nohdr = './tests/nohdr.csv'
 sparse = './tests/sparse.csv'
 iso = './tests/test-iso-8859-1.csv'
+duplicate_cols = './tests/duplicate_cols.csv'
 
 
 # --------------------------------------------------
@@ -208,6 +208,21 @@ def test_multiple_files():
         '// ****** Record 1 ****** //',
         'id  : 1',
         'val : foo',
+    ])
+    assert out.strip() == expected
+
+
+# --------------------------------------------------
+def test_duplicate_cols():
+    """test"""
+
+    rv, out = getstatusoutput(f'{prg} {duplicate_cols}')
+    assert rv == 0
+    expected = '\n'.join([
+        '// ****** Record 1 ****** //',
+        'name  : Keith',
+        'age   : 42',
+        'age_2 : 42',
     ])
     assert out.strip() == expected
 
