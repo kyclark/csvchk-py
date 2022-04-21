@@ -228,6 +228,29 @@ id  : 1
 val : foo
 ```
 
+## Duplicate Column Names
+
+Duplicate column names will have a suffix of `_<num>` starting at the second occurrence.
+For instance, this file:
+
+```
+$ cat tests/duplicate_cols.csv
+name,age,age
+Keith,42,42
+Jorge,35,35
+Geoffrey,51,51
+```
+
+Will produce this output:
+
+```
+$ csvchk tests/duplicate_cols.csv
+// ****** Record 1 ****** //
+name  : Keith
+age   : 42
+age_2 : 42
+```
+
 ## Author
 
 Ken Youens-Clark <kyclark@gmail.com>
