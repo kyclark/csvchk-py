@@ -4,7 +4,8 @@ Purpose: Check the first/few records of a delimited text file
 Author : Ken Youens-Clark <kyclark@gmail.com>
 """
 
-# pylint: disable=use-implicit-booleaness-not-comparison,unspecified-encoding,too-many-locals
+# pylint: disable=use-implicit-booleaness-not-comparison,unspecified-encoding
+# pylint: disable=too-many-locals,consider-using-with
 
 import argparse
 import csv
