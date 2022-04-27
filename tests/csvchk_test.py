@@ -11,7 +11,8 @@ csv1 = './tests/test.csv'
 tab1 = './tests/test.tab'
 txt1 = './tests/test.txt'
 txt2 = './tests/test2.txt'
-nohdr = './tests/nohdr.csv'
+nohdr_csv = './tests/nohdr.csv'
+nohdr_tab = './tests/nohdr.txt'
 sparse = './tests/sparse.csv'
 iso = './tests/test-iso-8859-1.csv'
 duplicate_cols = './tests/duplicate_cols.csv'
@@ -111,10 +112,20 @@ def test_number():
 
 
 # --------------------------------------------------
-def test_no_headers():
+def test_no_headers_csv():
     """test"""
 
-    rv, out = getstatusoutput(f'{prg} -N {nohdr}')
+    rv, out = getstatusoutput(f'{prg} -N {nohdr_csv}')
+    assert rv == 0
+    assert out.strip() == '\n'.join(
+        ['// ****** Record 1 ****** //', 'Field1 : 1', 'Field2 : foo'])
+
+
+# --------------------------------------------------
+def test_no_headers_tab():
+    """test"""
+
+    rv, out = getstatusoutput(f'{prg} -N {nohdr_tab}')
     assert rv == 0
     assert out.strip() == '\n'.join(
         ['// ****** Record 1 ****** //', 'Field1 : 1', 'Field2 : foo'])
@@ -124,7 +135,7 @@ def test_no_headers():
 def test_fieldnames():
     """test"""
 
-    rv, out = getstatusoutput(f'{prg} -f "f1, f2" {nohdr}')
+    rv, out = getstatusoutput(f'{prg} -f "f1, f2" {nohdr_csv}')
     assert rv == 0
     assert out.strip() == '\n'.join(
         ['// ****** Record 1 ****** //', 'f1 : 1', 'f2 : foo'])

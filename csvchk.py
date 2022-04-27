@@ -146,9 +146,9 @@ def main() -> None:
 
         if args.no_headers:
             line = fh.readline()
-            num_flds = len(
-                pp.pyparsing_common.comma_separated_list.parseString(
-                    line).asList())
+            vals = pp.pyparsing_common.comma_separated_list.parseString(
+                line).asList() if sep == ',' else line.split(sep)
+            num_flds = len(vals)
             csv_args['fieldnames'] = list(
                 map(lambda i: f'Field{i}', range(1, num_flds + 1)))
             if fh.name != '<stdin>':
