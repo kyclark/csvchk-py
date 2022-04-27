@@ -16,7 +16,7 @@ import sys
 from collections import defaultdict
 from typing import List, TextIO, NamedTuple, Any, Dict, Optional, Sequence
 
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 
 
 class Args(NamedTuple):

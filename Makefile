@@ -6,7 +6,7 @@ test:
 	python3 -m pytest --pylint -xv $(PRG) tests
 
 dist: clean
-	python3 setup.py sdist bdist_wheel
+	python3 setup.py sdist
 
 clean:
 	rm -rf dist *.egg-info build .pytest_cache __pycache__
