@@ -5,7 +5,7 @@ Author : Ken Youens-Clark <kyclark@gmail.com>
 """
 
 # pylint: disable=use-implicit-booleaness-not-comparison,unspecified-encoding
-# pylint: disable=too-many-locals,consider-using-with
+# pylint: disable=too-many-branches,too-many-locals,consider-using-with
 
 import argparse
 import csv
@@ -16,7 +16,7 @@ import sys
 from collections import defaultdict
 from typing import List, TextIO, NamedTuple, Any, Dict, Optional, Sequence
 
-VERSION = '0.2.2'
+VERSION = '0.3.0'
 
 
 class Args(NamedTuple):
@@ -29,6 +29,7 @@ class Args(NamedTuple):
     dense_view: bool
     show_field_number: bool
     no_headers: bool
+    field_limit: int
 
 
 # --------------------------------------------------
@@ -65,6 +66,13 @@ def get_args() -> Args:
                         metavar='nrecs',
                         type=int,
                         default=1)
+
+    parser.add_argument('-L',
+                        '--field-limit',
+                        help='How many fields to show',
+                        metavar='nrecs',
+                        type=int,
+                        default=0)
 
     parser.add_argument('-g',
                         '--grep',
@@ -118,6 +126,7 @@ def get_args() -> Args:
                 sep=args.sep,
                 fieldnames=args.fieldnames,
                 limit=args.limit,
+                field_limit=args.field_limit,
                 grep=args.grep,
                 dense_view=args.dense,
                 show_field_number=args.number,
@@ -167,6 +176,9 @@ def main() -> None:
                 continue
 
             flds = list(vals.keys())
+            if args.field_limit > 0:
+                flds = flds[:args.field_limit + 1]
+
             longest = max(map(len, flds))
             fmt = '{:' + str(longest + 1) + '}: {}'
             num_shown += 1
@@ -177,6 +189,9 @@ def main() -> None:
                     print(f'{n:3} {show}')
                 else:
                     print(show)
+
+                if args.field_limit > 0 and n == args.field_limit:
+                    break
 
             if num_shown == args.limit:
                 break

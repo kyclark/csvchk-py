@@ -19,14 +19,14 @@ duplicate_cols = './tests/duplicate_cols.csv'
 
 
 # --------------------------------------------------
-def test_exists():
+def test_exists() -> None:
     """exists"""
 
     assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
-def test_usage():
+def test_usage() -> None:
     """usage"""
 
     for flag in ['-h', '--help']:
@@ -36,7 +36,7 @@ def test_usage():
 
 
 # --------------------------------------------------
-def test_bad_file():
+def test_bad_file() -> None:
     """test bad file"""
 
     bad = random_string()
@@ -47,7 +47,7 @@ def test_bad_file():
 
 
 # --------------------------------------------------
-def test_bad_sep():
+def test_bad_sep() -> None:
     """test bad sep"""
 
     sep = random.choice(',!:@') * random.choice(range(2, 5))
@@ -59,8 +59,8 @@ def test_bad_sep():
 
 
 # --------------------------------------------------
-def test_csv():
-    """test"""
+def test_csv() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} {csv1}')
     assert rv == 0
@@ -69,8 +69,8 @@ def test_csv():
 
 
 # --------------------------------------------------
-def test_tab():
-    """test"""
+def test_tab() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} {tab1}')
     assert rv == 0
@@ -79,8 +79,8 @@ def test_tab():
 
 
 # --------------------------------------------------
-def test_sep():
-    """test"""
+def test_sep() -> None:
+    """ Test """
 
     for file, sep in [(txt1, ','), (txt2, ':')]:
         rv, out = getstatusoutput(f'{prg} -s "{sep}" {file}')
@@ -90,7 +90,7 @@ def test_sep():
 
 
 # --------------------------------------------------
-def test_iso():
+def test_iso() -> None:
     """test iso"""
 
     rv, out = getstatusoutput(f'{prg} {iso} -e ISO-8859-1')
@@ -102,8 +102,8 @@ def test_iso():
 
 
 # --------------------------------------------------
-def test_number():
-    """test"""
+def test_number() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -n {csv1}')
     assert rv == 0
@@ -112,8 +112,8 @@ def test_number():
 
 
 # --------------------------------------------------
-def test_no_headers_csv():
-    """test"""
+def test_no_headers_csv() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -N {nohdr_csv}')
     assert rv == 0
@@ -122,8 +122,8 @@ def test_no_headers_csv():
 
 
 # --------------------------------------------------
-def test_no_headers_tab():
-    """test"""
+def test_no_headers_tab() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -N {nohdr_tab}')
     assert rv == 0
@@ -132,8 +132,8 @@ def test_no_headers_tab():
 
 
 # --------------------------------------------------
-def test_fieldnames():
-    """test"""
+def test_fieldnames() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -f "f1, f2" {nohdr_csv}')
     assert rv == 0
@@ -142,8 +142,8 @@ def test_fieldnames():
 
 
 # --------------------------------------------------
-def test_limit():
-    """test"""
+def test_limit() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -l 2 {csv1}')
     assert rv == 0
@@ -154,8 +154,8 @@ def test_limit():
 
 
 # --------------------------------------------------
-def test_negative_limit():
-    """test"""
+def test_negative_limit() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -l -1 {csv1}')
     assert rv == 0
@@ -167,7 +167,7 @@ def test_negative_limit():
 
 
 # --------------------------------------------------
-def test_grep():
+def test_grep() -> None:
     """test grep"""
 
     rv1, out1 = getstatusoutput(f'{prg} -g ba {csv1}')
@@ -191,8 +191,8 @@ def test_grep():
 
 
 # --------------------------------------------------
-def test_dense():
-    """test"""
+def test_dense() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} -l 3 -d {sparse}')
     assert rv == 0
@@ -204,8 +204,8 @@ def test_dense():
 
 
 # --------------------------------------------------
-def test_multiple_files():
-    """test"""
+def test_multiple_files() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} {csv1} {tab1}')
     assert rv == 0
@@ -224,8 +224,8 @@ def test_multiple_files():
 
 
 # --------------------------------------------------
-def test_duplicate_cols():
-    """test"""
+def test_duplicate_cols() -> None:
+    """ Test """
 
     rv, out = getstatusoutput(f'{prg} {duplicate_cols}')
     assert rv == 0
@@ -239,7 +239,18 @@ def test_duplicate_cols():
 
 
 # --------------------------------------------------
-def random_string():
+def test_field_limit() -> None:
+    """ Test """
+
+    for arg in ['-L', '--field-limit']:
+        rv, out = getstatusoutput(f'{prg} {arg} 1 {csv1}')
+        assert rv == 0
+        expected = '\n'.join(['// ****** Record 1 ****** //', 'id  : 1'])
+        assert out.strip() == expected
+
+
+# --------------------------------------------------
+def random_string() -> None:
     """generate a random string"""
 
     k = random.randint(5, 10)

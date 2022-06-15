@@ -26,9 +26,9 @@ val : foo
 
 Run with `-h` or `--help` for a full usage:
 
-
-    usage: csvchk.py [-h] [-s sep] [-f names] [-l nrecs] [-g grep] [-d] [-n] [-N]
-                     [-e encode] [--version]
+    $ ./csvchk.py -h
+    usage: csvchk.py [-h] [-s sep] [-f names] [-l nrecs] [-L nrecs] [-g grep] [-d]
+                     [-n] [-N] [-e encode] [--version]
                      FILE [FILE ...]
 
     Check a delimited text file
@@ -43,6 +43,8 @@ Run with `-h` or `--help` for a full usage:
                             Field names (no header) (default: )
       -l nrecs, --limit nrecs
                             How many records to show (default: 1)
+      -L nrecs, --field-limit nrecs
+                            How many fields to show (default: 0)
       -g grep, --grep grep  Only show records with a given value (default: )
       -d, --dense           Not sparse (skip empty fields) (default: False)
       -n, --number          Show field number (e.g., for awk) (default: False)
@@ -249,6 +251,16 @@ $ csvchk tests/duplicate_cols.csv
 name  : Keith
 age   : 42
 age_2 : 42
+```
+
+## Limiting the Columns Shown
+
+You may wish to limit the number of columns shown using the `-L|--field-limit` option:
+
+```
+$ csvchk --field-limit 1 tests/test.csv
+// ****** Record 1 ****** //
+id  : 1
 ```
 
 ## Author
