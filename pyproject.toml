@@ -1,0 +1,22 @@
+[build-system]
+requires = ['setuptools>=61.0']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'csvchk'
+version = '0.3.2'
+authors = [
+  { name='Ken Youens-Clark', email='kyclark@gmail.com' },
+]
+description = 'Vertical display of delimited data'
+readme = 'README.md'
+requires-python = '>=3.7'
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+]
+
+[project.urls]
+'Homepage' = 'https://github.com/kyclark/csvchk'
+'Bug Tracker' = 'https://github.com/kyclark/csvchk/issues'

@@ -1,6 +1,6 @@
 # csvchk
 
-Check one record of a delimited text file
+Vertical display of delimited data
 
 This program will show you the first record of a delimited text file transposed vertically.
 It is meant to complement the many features of the `csvkit` tools.

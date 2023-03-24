@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Purpose: Check the first/few records of a delimited text file
+Purpose: Vertical display of delimited data
 Author : Ken Youens-Clark <kyclark@gmail.com>
 """
 
@@ -16,7 +16,7 @@ import sys
 from collections import defaultdict
 from typing import List, TextIO, NamedTuple, Any, Dict, Optional, Sequence
 
-VERSION = '0.3.0'
+VERSION = '0.3.2'
 
 
 class Args(NamedTuple):
